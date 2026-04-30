@@ -62,7 +62,17 @@ router.get('/:idP/habilidades/:idH', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    res.json();
+    const { nombre, descripcion, ataque, defensa, estamina } = req.body;
+
+    const personaje = await Personaje.create({
+      nombre,
+      descripcion,
+      ataque,
+      defensa,
+      estamina
+    });
+
+    res.status(201).json(personaje);
   } catch (err) {
     next(err);
   }
@@ -70,7 +80,25 @@ router.post('/', async (req, res, next) => {
 
 router.post('/:id/habilidades', async (req, res, next) => {
   try {
-    res.json();
+    const { habilidadId, nivel } = req.body;
+
+    const personaje = await Personaje.findByPk(req.params.id);
+    if (!personaje) {
+      return res.status(404).json({ mensaje: "Personaje no encontrado" });
+    }
+
+    const habilidad = await Habilidad.findByPk(habilidadId);
+    if (!habilidad) {
+      return res.status(404).json({ mensaje: "Habilidad no encontrada" });
+    }
+
+    const relacion = await PersonajeHabilidad.create({
+      personajeId: req.params.id,
+      habilidadId,
+      nivel
+    });
+
+    res.status(201).json(relacion);
   } catch (err) {
     next(err);
   }
@@ -78,7 +106,23 @@ router.post('/:id/habilidades', async (req, res, next) => {
 
 router.put('/:id', async (req, res, next) => {
   try {
-    res.json();
+    const personaje = await Personaje.findByPk(req.params.id);
+
+    if (!personaje) {
+      return res.status(404).json({ mensaje: "Personaje no encontrado" });
+    }
+
+    const { nombre, descripcion, ataque, defensa, estamina } = req.body;
+
+    await personaje.update({
+      nombre,
+      descripcion,
+      ataque,
+      defensa,
+      estamina
+    });
+
+    res.json(personaje);
   } catch (err) {
     next(err);
   }
