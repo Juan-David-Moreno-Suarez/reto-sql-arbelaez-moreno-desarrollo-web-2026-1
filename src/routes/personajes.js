@@ -62,14 +62,15 @@ router.get('/:idP/habilidades/:idH', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    const { nombre, descripcion, ataque, defensa, estamina } = req.body;
+    const { nombre, descripcion, ataque, defensa, estamina, perfilId } = req.body;
 
     const personaje = await Personaje.create({
       nombre,
       descripcion,
       ataque,
       defensa,
-      estamina
+      estamina,
+      perfilId
     });
 
     res.status(201).json(personaje);
